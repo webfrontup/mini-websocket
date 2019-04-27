@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 轮询 -->
+    <!-- <div id="root">
+        <script>
+            setInterval(()=> {
+                let xhr = new XMLHttpRequest;
+                xhr.open('get','http://localhost:8080/clock',true)
+                xhr.onreadystatechange = function() {
+                    document.querySelector("#root").innerHTML = xhr.responseText;
+                }
+                xhr.send();
+            },1000)
+        </script>
+    </div> -->
+    <!-- 长轮询 -->
+    <div id="root2">
+        <script>
+            function send() {
+                let xhr = new XMLHttpRequest;
+                xhr.open('get','/clock2',true);
+                xhr.onreadystatechange = function() {
+                    document.querySelector("#root2").innerHTML = xhr.responseText;
+                    // 在上一次的响应成功结束之后再发下一次的请求
+                    send();
+                }
+                xhr.send();
+            }
+            send();
+        </script>
+    </div>
+</body>
+</html>
