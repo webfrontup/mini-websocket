@@ -26,11 +26,23 @@ const server = net.createServer(function(socket){
                     '\r\n'
                 ].join('\r\n')
                 socket.end(response);
-            }else{
-                socket.end('error')
             }
         } else {
-            socket.end("ERROR");
+            console.log(12345)
+            let isFin = data[0] & (0b10000000 == 0b10000000); //判断是否为结束符
+            const _opcode = data[0] & 0b00001111;//操作符
+            const _isMast = data[1] & (0b10000000 == 0b10000000); //判断是否有掩码
+            const _payloadLength = data[1] & 0b01111111; //数据的长度
+            const _maskKey = data.slice(2,6); //截取maskKey
+            const payload = data.slice(6)
+            unmask(payload, _maskKey)
+            console.log(payload.toString())
+            const result = Buffer.alloc(2 + _payloadLength);
+            result[0] = 0b10000010;
+            result[1] = _payloadLength;
+            payload.copy(result, 2)
+            result[result.length-1] = 65
+            socket.write(result);
         }
     })
     socket.on('end', function() {
@@ -43,6 +55,13 @@ const SECRET = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 const crypto = require('crypto')
 function sign(key) {
     return crypto.createHash("sha1").update(key + SECRET).digest('base64');
+}
+// 掩码算法
+//http://www.zhufengpeixun.com/plan/html/36.websocket-1.html#t182.4.2%20%E6%8E%A9%E7%A0%81%E7%AE%97%E6%B3%95
+function unmask(payload, _maskKey){
+    for(let i=0; i<payload.length; i++) {
+        payload[i] ^= _maskKey[i % 4];
+    }
 }
 
 // node ws.js
