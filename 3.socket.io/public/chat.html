@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .btns{
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        hello2
+    </div>
+    <input type="text" id="content">
+    <button onclick="send()">发言</button>
+    <div class="btns">
+        <!-- 客户端可以进出不同的房间 在房间内说话，房间外听不到 -->
+        <button onclick="join('red')">进入红房间</button>
+        <button onclick="join('green')">进入绿房间</button>
+        <button onclick="leave('red')">离开红房间</button>
+        <button onclick="leave('green')">离开绿房间</button>
+    </div>
+    <!-- node_modules中 -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let inputContent = document.querySelector("#content")
+        // http://www.zhufengpeixun.com/plan/html/36.websocket-2.html
+        // 引入以上js文件后，即可拿到 io方法
+        // 连接 /chat 地址进行信息传输
+        let socket = io('/chat') // new Websocket("ws://localhost:xxxx")
+        // let socket = io.connect();
+        // let socket = io.connect('/');
+        // let socket = ip.connect('localhost:xxxx/')
+
+        socket.on('connect',function() {
+            console.log('连接成功');
+            socket.send('服务器你好');
+            // socket.emit('message','服务器你好');
+        })
+        socket.on('error',function(err) {
+            console.log(err,'err')
+        })
+        // 监听服务器发过来的消息
+        socket.on('message', function (message) {
+            console.log(message)
+        })
+        //
+        function send() {
+            let val = inputContent.value;
+            socket.send(val);
+        }
+        // 不同房间有不同的名字
+        function join(name) {
+            // 向服务器发送一个消息 消息类型叫join 参数是name
+            socket.emit('join',name)
+        } 
+        function leave(name) {
+            socket.emit('leave', name)
+        }  
+    </script>
+</body>
+</html>
