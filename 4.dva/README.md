@@ -43,3 +43,14 @@
     $ mkdir myapp && cd myapp
     $ yarn create umi
 ```
+
+### 订阅键盘事件
+subscription 语义是订阅，用于订阅一个数据源，然后根据条件dispatch需要的action。数据源可以是当前的时间、服务器的websocket连接、keyboard、geolocation变化、history路由变化等等
+- keymaster
+```js
+subscriptions: {
+    keyboard({dispatch}) {
+        key('space', () => dispatch({type: 'add'}))
+    }
+}
+```

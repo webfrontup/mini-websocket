@@ -4,12 +4,12 @@ import styles from './index.less';
 
 // 此props为 connect传过来的值
 const Counter = (props) => {
-    let { current, record, dispatch }  = props
+    let { current, record, name, dispatch } = props;
     // console.log(props,'props');
     return (
         <div className={styles.container}>
             <div className={styles.record}>
-                最高分 {record}
+                {name} 最高分 {record}
             </div>
             <div className={styles.current}>
                 {current}
@@ -28,7 +28,8 @@ export default connect(
     state => {
         return {
             current: state.count.current,
-            record: state.count.record
+            record: state.count.record,
+            name: state.home.name
         };
     }
 )(Counter);
